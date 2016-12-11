@@ -13,16 +13,20 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Money
+namespace Money.View
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(Money.ViewModel.WindowWBViewModel VM = null)
         {
+            //DataContext = VM??new ViewModel.MainWindowViewModel();
             InitializeComponent();
+            //CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(lvAccGp.ItemsSource);
+            //PropertyGroupDescription groupDescription = new PropertyGroupDescription("Group");            
+            //view.GroupDescriptions.Add(groupDescription);
         }
     }
 }
