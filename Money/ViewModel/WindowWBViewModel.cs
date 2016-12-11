@@ -36,7 +36,7 @@ namespace Money.ViewModel
             }
         }
 
-        private ObservableCollection<AccSubTotal> accsumms;
+        private ObservableCollection<AccSubTotal> accsumms = new ObservableCollection<AccSubTotal>();
         public ObservableCollection<AccSubTotal> Accsumms
         {
             get
@@ -237,14 +237,11 @@ namespace Money.ViewModel
 
             Accs = BookData.Accs.Local.ToBindingList();
             Trans = BookData.Trans.Local.ToBindingList();
-            Accsumms = new ObservableCollection<AccSubTotal>(BookData.AccSummary.ToList());
 
-            AccTotal = (from a in BookData.AccSummary.ToList()
-                        group a by a.Acc.Gps into g
-                        select g).ToList();
+            Accsumms.Clear();
+            foreach(var i in BookData.AccSummary.ToList())
+                Accsumms.Add(i);
 
-            AccTotal.
-            A = new CollectionViewSource();
         }
         /// <summary>
         /// Метод добавления новой транзакции из полей ввода
@@ -264,8 +261,6 @@ namespace Money.ViewModel
             NewAmount = 0.0;
             NewDescription = "";
 
-            NotifyPropertyChanged("NewDate");
-            NotifyPropertyChanged("NewIDAccOrigin");
             NotifyPropertyChanged("NewIDAccDest");
             NotifyPropertyChanged("NewAmount");
             NotifyPropertyChanged("NewDescription");

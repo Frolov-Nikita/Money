@@ -22,8 +22,11 @@ namespace Money.View
         public WindowWB()
         {
             InitializeComponent();
-            //CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(lvAccGp.ItemsSource);
-            //view.GroupDescriptions.Add(new PropertyGroupDescription("Acc.Gps"));
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(lvAccGp.ItemsSource);
+
+            PropertyGroupDescription pgd = new PropertyGroupDescription("Acc.Gps") ;
+            pgd.GroupNames.Add(new {Name = "Не сгруппированные" });
+            view.GroupDescriptions.Add(pgd);
         }
     }
 }
