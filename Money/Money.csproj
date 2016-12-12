@@ -94,14 +94,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\Filter.cs" />
     <Compile Include="ViewModel\Converters\CnvTest.cs" />
     <Compile Include="View\WindowWB.xaml.cs">
       <DependentUpon>WindowWB.xaml</DependentUpon>
     </Compile>
-    <Page Include="View\MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -122,10 +119,6 @@
     <Compile Include="ViewModel\Converters\CnvIntToString.cs" />
     <Compile Include="ViewModel\Converters\CnvNotNullToVisibility.cs" />
     <Compile Include="ViewModel\WindowWBViewModel.cs" />
-    <Compile Include="View\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Page Include="View\WindowWB.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -149,8 +142,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Money.Model.Acc.datasource" />
-    <None Include="Money.Model.Tran.datasource" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

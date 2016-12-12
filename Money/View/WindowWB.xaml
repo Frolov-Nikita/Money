@@ -33,14 +33,14 @@
                         Command="{Binding UpdateTrans}" >
                     <Image Source="/Money;component/Resources/Available Updates-16.png" Stretch="None"/>
                 </Button>
-                <!--<CheckBox ToolTip="Статистика по счету" IsChecked="{Binding ChartEnabled}">
-                    <Image Source="/Account;component/Resources/Line Chart-16.png" Stretch="None"/>
+                <CheckBox ToolTip="Статистика по счету" IsChecked="{Binding ChartEnabled}">
+                    <Image Source="/Money;component/Resources/Line Chart-16.png" Stretch="None"/>
                 </CheckBox>
                 <Separator/>
                 <Label Content="Cчет:"/>
                 <ComboBox  DisplayMemberPath="Name" MinWidth="110"
-                    SelectedValue="{Binding FilterSlectedAcc}" 
-                    ItemsSource="{Binding Path=BookData.DS/Acc}"/>
+                    SelectedValue="{Binding Path=FilterSlectedAcc}" 
+                    ItemsSource="{Binding Path=Accs}"/>
                 <Label Content="Фильтр с:"/>
                 <DatePicker  SelectedDate="{Binding Path=FilterDateBegin}" />
                 <Label Content="по:"/>
@@ -50,7 +50,7 @@
                     <Image Source="/Money;component/Resources/ClearFilters16.png" Stretch="None"/>
                 </CheckBox>
 
-                <Separator/>-->
+                <Separator/>
             </ToolBar>
         </ToolBarPanel>
         <Grid Grid.Row="1">

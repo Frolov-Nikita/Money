@@ -36,6 +36,21 @@ namespace Money.ViewModel
             }
         }
 
+        private List<Tran> trans;
+        public List<Tran> Trans
+        {
+            get
+            {
+                return trans;
+            }
+
+            set
+            {
+                trans = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         private ObservableCollection<AccSubTotal> accsumms = new ObservableCollection<AccSubTotal>();
         public ObservableCollection<AccSubTotal> Accsumms
         {
@@ -50,98 +65,160 @@ namespace Money.ViewModel
                 NotifyPropertyChanged();
             }
         }
-
-        private IEnumerable<object> accTotal;
-        public CollectionViewSource A { get; set; }
-        public IEnumerable<object> AccTotal //IEnumerable<IGrouping<ObservableCollection<Gp>, AccSubTotal>> 
-        {
-            get
-            {
-                return accTotal;
-            }
-
-            set
-            {
-                accTotal = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        private BindingList<Tran> trans;
-        public BindingList<Tran> Trans
-        {
-            get
-            {
-                return trans;
-            }
-
-            set
-            {
-                trans = value;
-                NotifyPropertyChanged();
-            }
-        }
         
         #region newRowFields
-        public DateTime NewDate { get; set; } = DateTime.Now;
-        public int NewIDAccOrigin { get; set; }
-        public int NewIDAccDest { get; set; }
-        public double NewAmount { get; set; }
-        public string NewDescription { get; set; } = "";
+        private DateTime newDate = DateTime.Now;
+        public DateTime NewDate
+        {
+            get
+            {
+                return newDate;
+            }
+
+            set
+            {
+                newDate = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private int newIDAccOrigin;
+        public int NewIDAccOrigin
+        {
+            get
+            {
+                return newIDAccOrigin;
+            }
+
+            set
+            {
+                newIDAccOrigin = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private int newIDAccDest;
+        public int NewIDAccDest
+        {
+            get
+            {
+                return newIDAccDest;
+            }
+
+            set
+            {
+                newIDAccDest = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private double newAmount = 0.0;
+        public double NewAmount
+        {
+            get
+            {
+                return newAmount;
+            }
+
+            set
+            {
+                newAmount = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private string newDescription = "";
+        public string NewDescription
+        {
+            get
+            {
+                return newDescription;
+            }
+
+            set
+            {
+                newDescription = value;
+                NotifyPropertyChanged();
+            }
+        }
         #endregion
 
         #region фильтры
-        int _FilterSlectedAcc;
-        public int FilterSlectedAcc
+        Acc filterSlectedAcc;
+        public Acc FilterAcc
         {
-            get { return _FilterSlectedAcc; }
+            get { return filterSlectedAcc; }
             set
             {
-                _FilterSlectedAcc = value;
+                filterSlectedAcc = value;
                 FilterEnabled = true;
                 FilterUpdate();
                 NotifyPropertyChanged();
             }
         }
 
-
-        DateTime _filterDateBegin = DateTime.Now.AddDays(-30);
+        private DateTime filterDateBegin = DateTime.Now.AddDays(-30);
         public DateTime FilterDateBegin
         {
-            get { return _filterDateBegin; }
+            get { return filterDateBegin; }
             set
             {
-                _filterDateBegin = value;
+                filterDateBegin = value;
                 FilterEnabled = true;
                 FilterUpdate();
                 NotifyPropertyChanged();
             }
         }
 
-        private DateTime _filterDateEnd = DateTime.Now.AddDays(1);
+        private DateTime filterDateEnd = DateTime.Now.AddDays(1);
 
         public DateTime FilterDateEnd
         {
-            get { return _filterDateEnd; }
+            get { return filterDateEnd; }
             set
             {
-                _filterDateEnd = value;
+                filterDateEnd = value;
                 FilterEnabled = true;
                 FilterUpdate();
                 NotifyPropertyChanged();
             }
         }
 
-        private bool _filterEnabled;
+        private bool filterEnabled;
         //TODO переделать Фильтр на красиво
         public bool FilterEnabled
         {
-            get { return _filterEnabled; }
+            get { return filterEnabled; }
             set
             {
-                _filterEnabled = value;
+                filterEnabled = value;
                 FilterUpdate();
                 NotifyPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// Собранная из полей инструкция фильтра коллекции транзакций
+        /// </summary>
+        public string FilterSQLString { get
+            {
+
+                string f = "";
+                if (FilterAcc != null) f += " (AccOrigin.Name = '" + FilterAcc.Name + "' OR AccDest.Name = '" + FilterAcc.Name + "') ";
+
+                if (FilterDateBegin != null)
+                {
+                    f += f != "" ? " AND " : "";
+                    f += " (Date > '" + FilterDateBegin.ToString("yyyy-MM-dd") + "') ";
+                }
+
+                if (filterDateEnd != null)
+                {
+                    f += f != "" ? " AND " : "";
+                    f += " (Date < '" + filterDateEnd.ToString("yyyy-MM-dd") + "') ";
+                }
+
+                return f;
             }
         }
         #endregion
@@ -189,8 +266,7 @@ namespace Money.ViewModel
         #region command
         public CommandRef AddNewTrans { get; set; }
         public CommandRef UpdateTrans { get; set; }
-
-
+        
         #endregion
 
         // конструктор
@@ -203,10 +279,21 @@ namespace Money.ViewModel
             {
                 ExecuteDelegate = (a) =>
                 {
-                    AddNewTransMethod();
+                    BookData.Trans.Add(new Model.Tran()
+                    {
+                        AccDest_Id = NewIDAccDest,
+                        AccOrigin_Id = NewIDAccOrigin,
+                        Date = NewDate,
+                        Description = NewDescription,
+                        Amount = NewAmount
+                    });
+
+                    NewIDAccDest = 0;
+                    NewAmount = 0.0;
+                    NewDescription = "";
+
                     Refresh();
                 },
-
                 CanExecuteDelegate = (a) =>
                 {
                     return (NewIDAccOrigin > 0) && (NewIDAccDest > 0) && (NewAmount != 0);
@@ -236,34 +323,17 @@ namespace Money.ViewModel
             BookData.AccSummary.Load();
 
             Accs = BookData.Accs.Local.ToBindingList();
-            Trans = BookData.Trans.Local.ToBindingList();
+            var tr = (from t in BookData.Trans.Local
+                     where (t.Date > filterDateBegin) && (t.Date < filterDateEnd)
+                     select t);
+            Trans = FilterAcc!=null? 
+                tr.Where(t=> { return t.AccDest == FilterAcc || t.AccOrigin == FilterAcc; }).ToList() :
+                tr.ToList();
 
             Accsumms.Clear();
             foreach(var i in BookData.AccSummary.ToList())
                 Accsumms.Add(i);
 
-        }
-        /// <summary>
-        /// Метод добавления новой транзакции из полей ввода
-        /// </summary>
-        void AddNewTransMethod()
-        {
-            BookData.Trans.Add(new Model.Tran()
-            {
-                AccDest_Id = NewIDAccDest,
-                AccOrigin_Id = NewIDAccOrigin,
-                Date = NewDate,
-                Description = NewDescription,
-                Amount = NewAmount
-            });
-            
-            NewIDAccDest = 0;
-            NewAmount = 0.0;
-            NewDescription = "";
-
-            NotifyPropertyChanged("NewIDAccDest");
-            NotifyPropertyChanged("NewAmount");
-            NotifyPropertyChanged("NewDescription");
         }
 
         /// <summary>
@@ -271,6 +341,7 @@ namespace Money.ViewModel
         /// </summary>
         void FilterUpdate()
         {
+            
             //if (!FilterEnabled)
             //{
             //    TransView.RowFilter = "";
