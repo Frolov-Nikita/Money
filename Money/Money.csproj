@@ -96,6 +96,10 @@
     </ApplicationDefinition>
     <Compile Include="Model\Filter.cs" />
     <Compile Include="ViewModel\Converters\CnvTest.cs" />
+    <Compile Include="ViewModel\EditAccViewModel.cs" />
+    <Compile Include="View\EditAcc.xaml.cs">
+      <DependentUpon>EditAcc.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\WindowWB.xaml.cs">
       <DependentUpon>WindowWB.xaml</DependentUpon>
     </Compile>
@@ -119,6 +123,10 @@
     <Compile Include="ViewModel\Converters\CnvIntToString.cs" />
     <Compile Include="ViewModel\Converters\CnvNotNullToVisibility.cs" />
     <Compile Include="ViewModel\WindowWBViewModel.cs" />
+    <Page Include="View\EditAcc.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\WindowWB.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -154,7 +162,11 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Minus-16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Add Database-16.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

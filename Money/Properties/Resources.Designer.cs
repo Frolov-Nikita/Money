@@ -123,6 +123,16 @@ namespace Money.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Minus_16 {
+            get {
+                object obj = ResourceManager.GetObject("Minus_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Pencil16 {
             get {
                 object obj = ResourceManager.GetObject("Pencil16", resourceCulture);

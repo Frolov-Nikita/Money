@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Money.Model
 {
-    public class Acc : INotifyPropertyChanged
+    public class Acc : INotifyPropertyChanged, IComparable
     {
         public Acc()
         {
@@ -30,7 +31,7 @@ namespace Money.Model
             }
         }
 
-        private string name = "unnamed";
+        private string name = "Новый счет";
         public string Name
         {
             get
@@ -131,6 +132,11 @@ namespace Money.Model
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public int CompareTo(object obj)
+        {
+            return Name.CompareTo(((Acc)obj).Name);
         }
         #endregion
 

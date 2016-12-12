@@ -8,7 +8,7 @@
         xmlns:VMConv="clr-namespace:Money.ViewModel.Converters"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
-        Title="WindowWB" Height="300" Width="519">
+        Title="WindowWB" Height="307.004" Width="674.253">
     <Window.DataContext>
         <VM:WindowWBViewModel/>
     </Window.DataContext>
@@ -30,16 +30,22 @@
         <ToolBarPanel>
             <ToolBar>
                 <Button Height="24" ToolTip="Записать" 
-                        Command="{Binding UpdateTrans}" >
+                        Command="{Binding RefreshCmd}" >
                     <Image Source="/Money;component/Resources/Available Updates-16.png" Stretch="None"/>
                 </Button>
                 <CheckBox ToolTip="Статистика по счету" IsChecked="{Binding ChartEnabled}">
                     <Image Source="/Money;component/Resources/Line Chart-16.png" Stretch="None"/>
                 </CheckBox>
+
+                <Button Height="24" ToolTip="Добавить счет" 
+                        Command="{Binding UpdateTrans}" >
+                    <Image Source="/Money;component/Resources/Plus-16.png" Stretch="None"/>
+                </Button>
+                
                 <Separator/>
                 <Label Content="Cчет:"/>
                 <ComboBox  DisplayMemberPath="Name" MinWidth="110"
-                    SelectedValue="{Binding Path=FilterSlectedAcc}" 
+                    SelectedValue="{Binding Path=FilterAcc}" 
                     ItemsSource="{Binding Path=Accs}"/>
                 <Label Content="Фильтр с:"/>
                 <DatePicker  SelectedDate="{Binding Path=FilterDateBegin}" />
@@ -58,29 +64,42 @@
                 <ColumnDefinition Width="220"/>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            
-            <ListView Grid.Column="0" x:Name="lvAccGp" SelectionMode="Single"
-                    ItemsSource="{Binding Accsumms}"
-                   >
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Счет" >
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Acc.Name}" Foreground="{Binding Acc.Type, Converter={StaticResource CnvAccTypeToColor}}"/>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn Header="Сумма" >
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Amount, StringFormat=\{0:F\}}" Foreground="{Binding Amount, Converter={StaticResource CnvAmountToColor}}"/>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView>
-                </ListView.View>
 
+            <ListView Grid.Column="0" x:Name="lvAccGp" SelectionMode="Single"
+                      SelectedValue="{Binding FilterAcc}"
+                      SelectedValuePath="Acc"
+                      ItemsSource="{Binding Accsumms}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid MinWidth="150" HorizontalAlignment="Stretch" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="40"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Column="0" 
+                                Background="{Binding Acc.Type, Converter={StaticResource CnvAccTypeToColor}}"/>
+                            <TextBlock HorizontalAlignment="Left" Grid.Column="1" Margin="2"
+                                       Text="{Binding Acc.Name}"/>
+                            <TextBlock HorizontalAlignment="Right" Grid.Column="2" Margin="2"
+                                       Text="{Binding Amount, StringFormat=\{0:F\}}"
+                                       Foreground="{Binding Amount, Converter={StaticResource CnvAmountToColor}}"/>
+                            
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1"
+                                        Visibility="{Binding IsMouseOver, Converter={StaticResource CnvBoolToVisibility}, Mode=OneWay, RelativeSource={RelativeSource AncestorType=ListViewItem}}">
+                                <Button Height="24" ToolTip="Редактировать счет" 
+                                        Command="{Binding  Path=DataContext.EditAccCmd, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" >
+                                    <Image Source="/Money;component/Resources/Pencil16.png" Stretch="None"/>
+                                </Button>
+
+                                <Button Height="24" ToolTip="Удалить счет" 
+                                        Command="{Binding Path=DataContext.RemoveAccCmd, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" >
+                                    <Image Source="/Money;component/Resources/Minus-16.png" Stretch="None"/>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
                 <ListView.GroupStyle>
                     <GroupStyle HidesIfEmpty="False">
                         <GroupStyle.HeaderTemplate>
@@ -115,8 +134,10 @@
                     </GroupStyle>
                 </ListView.GroupStyle>
             </ListView>
-            <GridSplitter Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="10"/>
-            <Grid Margin="10,0,0,0" Grid.Column="1" >
+            
+            <GridSplitter Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="5"/>
+            
+            <Grid Margin="5,0,0,0" Grid.Column="1" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>
                     <RowDefinition Height="{Binding ChartEnabled, Mode=TwoWay, Converter={StaticResource CnvBoolToGrigLength} }" />
@@ -153,7 +174,7 @@
                     <TextBox Grid.ColumnSpan="5" Grid.Row="1" 
                              Text="{Binding NewDescription}"/>
                     <Button Content="Ok" Grid.Column="6" Grid.RowSpan="2"
-                            Command="{Binding AddNewTrans}"/>
+                            Command="{Binding AddNewTransCmd}"/>
                 </Grid>
                 <lvc:CartesianChart  x:Name="lineSeries"  Grid.Row="1"
                                 Visibility="{Binding ChartEnabled, Converter={StaticResource CnvBoolToVisibility}}"
@@ -163,7 +184,7 @@
                         <lvc:Axis Title="Даты" Labels="{Binding ChartDates}"></lvc:Axis>
                     </lvc:CartesianChart.AxisX>
                 </lvc:CartesianChart>
-                
+
                 <GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="5" />
                 <DataGrid AutoGenerateColumns="False" RowBackground="AliceBlue" AlternatingRowBackground="#FFE6E5FF"
                       ItemsSource="{Binding Trans}" Background="#FFE6E5FF" GridLinesVisibility="None" Grid.Row="2" Margin="0,5,0,0">

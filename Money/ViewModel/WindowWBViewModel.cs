@@ -36,6 +36,21 @@ namespace Money.ViewModel
             }
         }
 
+        private BindingList<Gp> gps;
+        public BindingList<Gp> Gps
+        {
+            get
+            {
+                return gps;
+            }
+
+            set
+            {
+                gps = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         private List<Tran> trans;
         public List<Tran> Trans
         {
@@ -264,9 +279,12 @@ namespace Money.ViewModel
         #endregion
 
         #region command
-        public CommandRef AddNewTrans { get; set; }
-        public CommandRef UpdateTrans { get; set; }
-        
+        public CommandRef AddNewTransCmd { get; set; }
+        public CommandRef RefreshCmd { get; set; }
+
+        public CommandRef AddNewAccCmd { get; set; }
+        public CommandRef RemoveAccCmd { get; set; }
+        public CommandRef EditAccCmd { get; set; }
         #endregion
 
         // конструктор
@@ -275,7 +293,7 @@ namespace Money.ViewModel
             BookData = new Model.BookContext();
             
             #region комманды
-            AddNewTrans = new CommandRef()
+            AddNewTransCmd = new CommandRef()
             {
                 ExecuteDelegate = (a) =>
                 {
@@ -300,18 +318,70 @@ namespace Money.ViewModel
                 }
             };
 
-            UpdateTrans = new CommandRef()
+            RefreshCmd = new CommandRef()
             {
                 ExecuteDelegate = (a) => {
                     Refresh();
                 },
                 //CanExecuteDelegate = (a) => { return BookData.TransHaveChanges; }
             };
+
+            AddNewAccCmd = new CommandRef()
+            {
+                ExecuteDelegate = (a) =>
+                {
+                    EditAccViewModel EAVM = new EditAccViewModel()
+                    {
+                        Acc = new Acc(),
+                        Gps = Gps
+                    };
+                }
+            };
+
+            RemoveAccCmd = new CommandRef()
+            {
+                ExecuteDelegate = (a) =>
+                {
+                    Acc A = ((Acc)a);
+                    if ((A.TransDest.Count > 0) || (A.TransOrigin.Count > 0))
+                    {
+                        if (System.Windows.MessageBox.Show("Удаление этого счета приведет\n к потере " +
+                            A.TransOrigin.Count + A.TransDest.Count + " транзакций. Все равно удалить?",
+                            "ВАЖНО!", System.Windows.MessageBoxButton.YesNo) == System.Windows.MessageBoxResult.Yes)
+                        {
+                            Accs.Remove(A);
+                            Refresh();
+                        }
+                    }
+                    else
+                    {
+                        Accs.Remove(A);
+                        Refresh();
+                    }
+                }
+            };
+
+            EditAccCmd = new CommandRef()
+            {
+                ExecuteDelegate = (a) =>
+                {
+                    EditAccViewModel EAVM = new EditAccViewModel() {
+                        Acc = (Acc)a,
+                        Gps = Gps
+                    };
+                    View.EditAcc EA = new View.EditAcc() { DataContext = EAVM};
+                    EA.Show();
+
+                }
+            };
             #endregion
 
             Refresh();
         }//public MainWindowModelView()
 
+        /// <summary>
+        /// Сохраняет внесенные изменения, редактирует фильтр
+        /// </summary>
         public void Refresh()
         {
             BookData.SaveChanges();
@@ -320,15 +390,26 @@ namespace Money.ViewModel
 
             BookData.Accs.Load();
             BookData.Trans.Load();
+            BookData.Gps.Load();
             BookData.AccSummary.Load();
 
             Accs = BookData.Accs.Local.ToBindingList();
-            var tr = (from t in BookData.Trans.Local
-                     where (t.Date > filterDateBegin) && (t.Date < filterDateEnd)
-                     select t);
-            Trans = FilterAcc!=null? 
-                tr.Where(t=> { return t.AccDest == FilterAcc || t.AccOrigin == FilterAcc; }).ToList() :
-                tr.ToList();
+            Gps = BookData.Gps.Local.ToBindingList();
+
+            if (FilterAcc == null)
+            {
+                Trans = (from t in BookData.Trans.Local
+                         where (t.Date >= filterDateBegin) && (t.Date <= filterDateEnd)
+                         select t).ToList();
+            }
+            else
+            {
+                Trans = (from t in BookData.Trans.Local
+                         where (t.Date >= filterDateBegin) &&
+                            (t.Date <= filterDateEnd) &&
+                            ((t.AccDest == FilterAcc)||(t.AccOrigin == FilterAcc))
+                         select t).ToList();
+            }
 
             Accsumms.Clear();
             foreach(var i in BookData.AccSummary.ToList())

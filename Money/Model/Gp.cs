@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Money.Model
 {
-    public class Gp : INotifyPropertyChanged
+    public class Gp : INotifyPropertyChanged, IComparable
     {
         public Gp()
         {
@@ -89,6 +89,11 @@ namespace Money.Model
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public int CompareTo(object obj)
+        {
+            return Name.CompareTo(((Gp)obj).Name);
         }
         #endregion
     }
