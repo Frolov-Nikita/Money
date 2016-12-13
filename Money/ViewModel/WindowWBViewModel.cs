@@ -18,8 +18,9 @@ namespace Money.ViewModel
     public class WindowWBViewModel : INotifyPropertyChanged
     {
         // TODO Окно настройки подключения к MySql и резервное копирование в SQLite. Автономная работа без MySQL
-        // TODO переделать Фильтр на красиво
-        // TODO графики
+        // TODO Переделать Фильтр на красиво
+        // TODO Графики
+        // TODO Вставка транзакций из буфера обмена (В отдельном окне)
 
         #region свойства
         BookContext BookData;
@@ -395,9 +396,7 @@ namespace Money.ViewModel
         public void Refresh()
         {
             BookData.SaveChanges();
-
-            //BookData.AccSummary.ToList
-
+            
             BookData.Accs.Load();
             BookData.Trans.Load();
             BookData.Gps.Load();

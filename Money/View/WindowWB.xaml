@@ -65,7 +65,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <ListView Grid.Column="0" x:Name="lvAccGp" SelectionMode="Single"
+            <ListView Grid.Column="0" x:Name="lvAccGp" 
                       SelectedValue="{Binding FilterAcc}"
                       SelectedValuePath="Acc"
                       ItemsSource="{Binding Accsumms}">
@@ -78,10 +78,10 @@
                                     <ColumnDefinition Width="40"/>
                                 </Grid.ColumnDefinitions>
 
-                                <TextBlock HorizontalAlignment="Left" Grid.Column="0" Margin="2"
+                                <TextBlock Height="24" HorizontalAlignment="Left" Grid.Column="0" Margin="2"
                                            Text="{Binding Acc.Name}"/>
-                                
-                                <TextBlock HorizontalAlignment="Right" Grid.Column="1" Margin="2"
+
+                                <TextBlock Height="24" HorizontalAlignment="Right" Grid.Column="1" Margin="2"
                                            Text="{Binding Amount, StringFormat=\{0:F\}}"
                                            Foreground="{Binding Amount, Converter={StaticResource CnvAmountToColor}}"/>
 

@@ -1,0 +1,73 @@
+﻿<Window x:Class="Money.View.ConnectionEdit"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:Money.View"
+        xmlns:VM="clr-namespace:Money.ViewModel"
+        xmlns:M="clr-namespace:Money.Model"
+        mc:Ignorable="d"
+        Title="Настройка подключения к БД" Height="341" Width="300">
+    <!--<Window.DataContext>
+        <VM:ConnectionEditViewModel/>
+    </Window.DataContext>-->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="85"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="36"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <TextBlock TextWrapping="Wrap" Grid.Row="0" Grid.ColumnSpan="2" Foreground="Gray" >
+                    Это дистанционная база данных, которая может находиться в сети или на вашем устройстве.
+        </TextBlock>
+
+        <Label Grid.Row="1" Grid.ColumnSpan="2"  Foreground="Gray" FontWeight="Bold" HorizontalAlignment="Center"
+                        Content="Настройки MySql"  />
+
+        <Label Grid.Row="2"  Foreground="Gray"
+                        Content="Хост БД"  />
+        <TextBox Grid.Row="2" Grid.Column="1" 
+                        Text="{Binding Path=DB.MySqlServer}"  />
+
+        <Label Grid.Row="3"  Foreground="Gray"
+                        Content="User ID" />
+        <TextBox Grid.Row="3" Grid.Column="1" 
+                        Text="{Binding Path=DB.MySqlUserID}" />
+
+        <Label Grid.Row="4"  Foreground="Gray"
+                        Content="Password" />
+        <TextBox Grid.Row="4" Grid.Column="1" 
+                     Text="{Binding Path=DB.MySqlPassword}"/>
+
+        <Label Grid.Row="5"  Foreground="Gray"
+                        Content="База" />
+        <TextBox Grid.Row="5" Grid.Column="1" 
+                        Text="{Binding Path=DB.MySqlDatabase}"  />
+
+        <Label Grid.Row="6" Grid.ColumnSpan="2"  Foreground="Gray" FontWeight="Bold" HorizontalAlignment="Center"
+                        Content="Настройки SQLite"  />
+
+        <Label Content="Файл SQLite" Grid.Row="7"  Foreground="Gray"/>
+        <Grid Grid.Row="7" Grid.Column="1" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="32"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock VerticalAlignment="Center" Grid.Column="0" TextWrapping="Wrap"
+                        Text="{Binding Path=DB.SQLiteDataSource}" />
+            <Button Content=".." Grid.Column="1" Command="{Binding OpenSQLiteDBDialog}"/>
+        </Grid>
+    </Grid>
+
+</Window>
