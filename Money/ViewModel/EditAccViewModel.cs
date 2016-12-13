@@ -13,6 +13,7 @@ using Money.Model;
 using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.Windows;
+using Money.ViewModel.Converters;
 
 namespace Money.ViewModel
 {
@@ -50,12 +51,14 @@ namespace Money.ViewModel
                 NotifyPropertyChanged();
             }
         }
-
         #endregion
 
         #region command
         public CommandRef AddGpCmd { get; set; }
         public CommandRef RemoveGpCmd { get; set; }
+
+        public CommandRef AddGpToAccCmd { get; set; }
+        public CommandRef RemoveGpFromAccCmd { get; set; }
 
         public CommandRef OkCmd { get; set; }
         public CommandRef CancelCmd { get; set; }
@@ -64,7 +67,6 @@ namespace Money.ViewModel
         // конструктор
         public EditAccViewModel()
         {
-
             #region комманды
             AddGpCmd = new CommandRef()
             {
@@ -79,10 +81,31 @@ namespace Money.ViewModel
                 ExecuteDelegate = G =>
                 {
                     if (((Gp)G).Accounts.Count > 0)
-                        if (System.Windows.MessageBox.Show("Группа содержит счета. Все равно удалить?", "Подтвердите", MessageBoxButton.OKCancel) != MessageBoxResult.OK)
+                        if (System.Windows.MessageBox.Show("Группа содержит счета.\n"+
+                            " Счета бедут разгруппированы.\n Все равно удалить?", "Подтвердите", MessageBoxButton.OKCancel) != MessageBoxResult.OK)
                             return;
                     Gps.Remove((Gp)G);
                 }
+            };
+
+            AddGpToAccCmd = new CommandRef()
+            {
+                ExecuteDelegate = G =>
+                {
+                    Acc.Gps.Add((Gp)G);
+                    //((Gp)G).Accounts.Add(Acc);
+                },
+                CanExecuteDelegate = G => { return !Acc.Gps.Contains(G); }
+            };
+
+            RemoveGpFromAccCmd = new CommandRef()
+            {
+                ExecuteDelegate = G =>
+                {
+                    Acc.Gps.Remove((Gp)G);
+                    //((Gp)G).Accounts.Remove(Acc);
+                },
+                CanExecuteDelegate = G => { return Acc.Gps.Contains(G); }
             };
 
             OkCmd = new CommandRef()
@@ -106,7 +129,7 @@ namespace Money.ViewModel
 
         }//public MainWindowModelView()
 
-        
+
 
         #region PropertyChanged
 

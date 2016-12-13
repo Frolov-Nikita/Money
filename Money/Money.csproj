@@ -97,6 +97,7 @@
     <Compile Include="Model\Filter.cs" />
     <Compile Include="ViewModel\Converters\CnvTest.cs" />
     <Compile Include="ViewModel\EditAccViewModel.cs" />
+    <Compile Include="ViewModel\Converters\EnumToItemsSource.cs" />
     <Compile Include="View\EditAcc.xaml.cs">
       <DependentUpon>EditAcc.xaml</DependentUpon>
     </Compile>
@@ -118,7 +119,7 @@
     <Compile Include="ViewModel\Converters\CnvBoolToVisibility.cs" />
     <Compile Include="ViewModel\Converters\CnvChangesToColor.cs" />
     <Compile Include="ViewModel\Converters\CnvEnumToString.cs" />
-    <Compile Include="ViewModel\Converters\CnvGpIDToName.cs" />
+    <Compile Include="ViewModel\Converters\CnvIsGpInAccColor.cs" />
     <Compile Include="ViewModel\Converters\CnvGroupAccountSum.cs" />
     <Compile Include="ViewModel\Converters\CnvIntToString.cs" />
     <Compile Include="ViewModel\Converters\CnvNotNullToVisibility.cs" />
@@ -214,6 +215,16 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Settings-16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Delete-16.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Group Objects-16.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

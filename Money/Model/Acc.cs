@@ -154,6 +154,7 @@ namespace Money.Model
 
     public class AccSubTotal
     {
+
         public Acc Acc { get; set; }
         public double Amount { get; set; }
     }
@@ -162,7 +163,15 @@ namespace Money.Model
     /// <summary>
     /// Типы счетов
     /// </summary>
-    public enum Tp : byte { input, active, credit, output }
+    public enum Tp : byte {
+        [Description("Источник")]
+        input,
+        [Description("Актив")]
+        active,
+        [Description("Обязательства")]
+        credit,
+        [Description("Затраты")]
+        output }
 
 
 }

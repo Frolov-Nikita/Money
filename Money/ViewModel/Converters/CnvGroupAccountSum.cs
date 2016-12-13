@@ -23,7 +23,7 @@ namespace Money.ViewModel.Converters
             foreach (object i in (ReadOnlyObservableCollection<object>)value)
                 sum += ((AccSubTotal)i).Amount;
 
-            return sum.ToString("0.0#");
+            return sum.ToString("0.00");
         }
 
         public object ConvertBack(object value, System.Type targetType,

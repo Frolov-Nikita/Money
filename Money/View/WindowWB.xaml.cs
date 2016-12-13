@@ -24,9 +24,32 @@ namespace Money.View
             InitializeComponent();
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(lvAccGp.ItemsSource);
 
-            PropertyGroupDescription pgd = new PropertyGroupDescription("Acc.Gps") ;
-            pgd.GroupNames.Add(new {Name = "Не сгруппированные" });
+            PropertyGroupDescription pgd = new PropertyGroupDescription(null, new CnvGroupingAccSubTotal()) ;
+            //pgd.GroupNames.Add(new {Name = "Не сгруппированные" });
             view.GroupDescriptions.Add(pgd);
         }
+
+        public class CnvGroupingAccSubTotal : IValueConverter
+        {
+            public object Convert(object value, System.Type targetType,
+                          object parameter,
+                          System.Globalization.CultureInfo culture)
+            {
+                if (value == null) return null;
+
+                Model.AccSubTotal A = (Model.AccSubTotal)value;
+                if (A.Acc.Gps.Count > 0)
+                    return (from g in A.Acc.Gps select g.Name).ToList();
+
+                return "Счета без группы";
+            }
+
+            public object ConvertBack(object value, System.Type targetType,
+                                      object parameter,
+                                      System.Globalization.CultureInfo culture)
+            {
+                throw new System.NotImplementedException();
+            }
+        }//public class CnvGroupingAccount : IValueConverter
     }
 }

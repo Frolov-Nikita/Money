@@ -127,11 +127,17 @@
   <data name="ClearFilters16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ClearFilters16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Delete_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Delete-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Delete_Database_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Delete Database-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Filter_Filled_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Filter Filled-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Group_Objects_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Group Objects-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Line_Chart_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Line Chart-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

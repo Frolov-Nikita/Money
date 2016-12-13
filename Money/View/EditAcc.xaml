@@ -3,58 +3,122 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:Money.View"
+        xmlns:localModel="clr-namespace:Money.Model"
         xmlns:VMConv="clr-namespace:Money.ViewModel.Converters"
         mc:Ignorable="d"
-        Title="{Binding Acc.Name}" Height="318.045" Width="533.459">
+        Title="{Binding Acc.Name}" Height="196.545" Width="354.959">
 
     <Window.Resources>
         <VMConv:CnvNotNullToVisibility x:Key="CnvNotNullToVisibility"/>
         <VMConv:CnvBoolToVisibility x:Key="CnvBoolToVisibility"/>
+        <VMConv:CnvIsGpInAccColor x:Key="CnvIsGpInAccColor"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="239*"/>
-            <RowDefinition Height="48*"/>
+            <RowDefinition/>
+            <RowDefinition Height="0"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="271*"/>
-                <ColumnDefinition Width="254*"/>
+                <ColumnDefinition Width="140"/>
+                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="32"/>
-                    <RowDefinition />
+                    <RowDefinition Height="79*" />
+                    <RowDefinition Height="56*"/>
                 </Grid.RowDefinitions>
-                <TextBox Grid.Row="0"
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>                        
+                    </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" 
                          Text="{Binding Acc.Name}"/>
+
+                <ComboBox Grid.Column="1"
+                          SelectedItem="{Binding Acc.Type}"
+                          ItemsSource="{Binding Source={VMConv:EnumToItemsSource {x:Type localModel:Tp}}}"/>                    
+                </Grid>
+
                 <TextBox  Grid.Row="1" 
-                         Text="{Binding Acc.Description}"/>
+                         Text="{Binding Acc.Description}" />
+
+                <ListView Grid.Row="2" 
+                    ItemsSource="{Binding Acc.Gps}">
+
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Width="135"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Width="130" >
+                                <TextBlock Padding="6" Margin="2" Foreground="DimGray" FontWeight="Bold" Width="140"
+                                           Text="{Binding Name}"/>
+
+                                <Button HorizontalAlignment="Right" Width="24" Margin="2"
+                                        Command="{Binding Path=DataContext.RemoveGpFromAccCmd, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                        CommandParameter="{Binding}"
+                                        Visibility="{Binding IsMouseOver, Converter={StaticResource CnvBoolToVisibility}, Mode=OneWay, RelativeSource={RelativeSource AncestorType=ListViewItem}}">
+
+                                    <Image Source="/Money;component/Resources/Minus-16.png"  HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
+                                </Button>
+
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+
+                </ListView>
             </Grid>
             <Grid Grid.Column="1">
                 <ListView 
                 ItemsSource="{Binding Path=Gps}" >
-                    <!--<ListView.ItemsPanel>
+                    <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel Width="{Binding ActualWidth , RelativeSource={RelativeSource AncestorType={x:Type ListView}}, Mode=OneWay}"/>
+                            <WrapPanel 
+                                Width="{Binding ActualWidth , RelativeSource={RelativeSource AncestorType={x:Type ListView}}, Mode=OneWay}"/>
+                            <!--Width="{Binding Parent.Parent.Width, Mode=OneWay, RelativeSource={RelativeSource Self}}"/>-->
                         </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>-->
+                    </ListView.ItemsPanel>
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid MinWidth="100">
-                                <TextBlock Padding="6" Margin="2" Background="LightGoldenrodYellow" FontWeight="Bold"
-                                           Text="{Binding Name}"/>
-                                <StackPanel Orientation="Horizontal" Margin="2"
-                                    Visibility="{Binding IsMouseOver, Converter={StaticResource CnvBoolToVisibility}, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <TextBox Padding="6" 
-                                        Text="{Binding Name}"/>
+                            <Border Margin="5">
 
-                                    <Button Content="del" 
-                                            Command="{Binding Path=DataContext.RemoveGpCmd, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-                                            CommandParameter="{Binding}"/>
-                                </StackPanel>
-                            </Grid>
+                                <Grid Width="200" Background="#FFEBFEFF"  >
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="/Money;component/Resources/Group Objects-16.png" Stretch="None" VerticalAlignment="Center"/>
+                                        <TextBlock Padding="6" Margin="2" Foreground="DimGray" FontWeight="Bold"                                           
+                                                   Text="{Binding Name}"/>
+                                    </StackPanel>
+                                    <Grid Background="#FF2EC0E0"
+                                        Visibility="{Binding IsMouseOver, Converter={StaticResource CnvBoolToVisibility}, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                        <TextBox Padding="6" HorizontalAlignment="Left" Width="140" Margin="2"
+                                            Text="{Binding Name}"/>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+
+                                            <Button Width="24" Margin="2"
+                                                    Command="{Binding Path=DataContext.AddGpToAccCmd, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                                    CommandParameter="{Binding}">
+                                                <Image Source="/Money;component/Resources/Plus-16.png"  HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
+                                            </Button>
+
+                                            <Button Width="24" Margin="2"
+                                                    Command="{Binding Path=DataContext.RemoveGpCmd, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                                    CommandParameter="{Binding}">
+                                                <Image Source="/Money;component/Resources/Delete-16.png"  HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None"/>
+                                            </Button>
+
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                            </Border>
                         </DataTemplate>
                     </ListView.ItemTemplate>
 
@@ -65,10 +129,10 @@
                         </ContextMenu>
                     </ListView.ContextMenu>
                 </ListView>
-                <Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="20" Width="20" 
+                <Button HorizontalAlignment="Right" VerticalAlignment="Bottom" Height="32" Width="32" Margin="5"
                         Command="{Binding AddGpCmd}"
                         Visibility="{Binding IsMouseOver, Converter={StaticResource CnvBoolToVisibility}, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Grid}}">
-                    <Image Source="/Money;component/Resources/Plus-16.png" Stretch="None"/>
+                    <Image Source="/Money;component/Resources/Plus-16.png" Stretch="None" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 </Button>
 
             </Grid>

@@ -158,7 +158,7 @@ namespace Money.Model
                        select new AccSubTotal
                        {
                            Acc = a,
-                           Amount = ((double?)ad.Amount) ?? 0.0 - ((double?)ao.Amount) ?? 0.0
+                           Amount = (((double?)ad.Amount) ?? 0.0) - (((double?)ao.Amount) ?? 0.0)
                        };
 
             }

@@ -17,6 +17,9 @@ namespace Money.ViewModel
 {
     public class WindowWBViewModel : INotifyPropertyChanged
     {
+        // TODO Окно настройки подключения к MySql и резервное копирование в SQLite. Автономная работа без MySQL
+        // TODO переделать Фильтр на красиво
+        // TODO графики
 
         #region свойства
         BookContext BookData;
@@ -158,7 +161,7 @@ namespace Money.ViewModel
         }
         #endregion
 
-        #region фильтры
+        #region Фильтр
         Acc filterSlectedAcc;
         public Acc FilterAcc
         {
@@ -166,20 +169,18 @@ namespace Money.ViewModel
             set
             {
                 filterSlectedAcc = value;
-                FilterEnabled = true;
                 FilterUpdate();
                 NotifyPropertyChanged();
             }
         }
 
-        private DateTime filterDateBegin = DateTime.Now.AddDays(-30);
+        private DateTime filterDateBegin = DateTime.Now.AddDays(-61);
         public DateTime FilterDateBegin
         {
             get { return filterDateBegin; }
             set
             {
                 filterDateBegin = value;
-                FilterEnabled = true;
                 FilterUpdate();
                 NotifyPropertyChanged();
             }
@@ -193,25 +194,11 @@ namespace Money.ViewModel
             set
             {
                 filterDateEnd = value;
-                FilterEnabled = true;
                 FilterUpdate();
                 NotifyPropertyChanged();
             }
         }
-
-        private bool filterEnabled;
-        //TODO переделать Фильтр на красиво
-        public bool FilterEnabled
-        {
-            get { return filterEnabled; }
-            set
-            {
-                filterEnabled = value;
-                FilterUpdate();
-                NotifyPropertyChanged();
-            }
-        }
-
+        
         /// <summary>
         /// Собранная из полей инструкция фильтра коллекции транзакций
         /// </summary>
@@ -236,9 +223,30 @@ namespace Money.ViewModel
                 return f;
             }
         }
+
+        /// <summary>
+        /// Собранная из полей инструкция фильтра коллекции транзакций
+        /// </summary>
+        public string FilterViewString
+        {
+            get
+            {
+
+                string f = "";
+                if (FilterAcc != null) f += "'" + FilterAcc.Name + "' ";
+
+                if (FilterDateBegin != null)                
+                    f += "С:" + FilterDateBegin.ToString("yyyy-MM-dd") + " ";
+                
+                if (filterDateEnd != null)
+                    f += "По:" + filterDateEnd.ToString("yyyy-MM-dd") + " ";
+
+                return f;
+            }
+        }
         #endregion
 
-        #region график
+        #region График
         private bool _ChartEnabled;
 
         public bool ChartEnabled
@@ -278,7 +286,7 @@ namespace Money.ViewModel
 
         #endregion
 
-        #region command
+        #region Команды
         public CommandRef AddNewTransCmd { get; set; }
         public CommandRef RefreshCmd { get; set; }
 
@@ -335,6 +343,8 @@ namespace Money.ViewModel
                         Acc = new Acc(),
                         Gps = Gps
                     };
+                    View.EditAcc EA = new View.EditAcc() { DataContext = EAVM };
+                    EA.ShowDialog();
                 }
             };
 
@@ -342,11 +352,11 @@ namespace Money.ViewModel
             {
                 ExecuteDelegate = (a) =>
                 {
-                    Acc A = ((Acc)a);
+                    Acc A = ((AccSubTotal)a).Acc;
                     if ((A.TransDest.Count > 0) || (A.TransOrigin.Count > 0))
                     {
                         if (System.Windows.MessageBox.Show("Удаление этого счета приведет\n к потере " +
-                            A.TransOrigin.Count + A.TransDest.Count + " транзакций. Все равно удалить?",
+                            (A.TransOrigin.Count + A.TransDest.Count) + " транзакций. Все равно удалить?",
                             "ВАЖНО!", System.Windows.MessageBoxButton.YesNo) == System.Windows.MessageBoxResult.Yes)
                         {
                             Accs.Remove(A);
@@ -366,11 +376,11 @@ namespace Money.ViewModel
                 ExecuteDelegate = (a) =>
                 {
                     EditAccViewModel EAVM = new EditAccViewModel() {
-                        Acc = (Acc)a,
+                        Acc = ((AccSubTotal)a).Acc,
                         Gps = Gps
                     };
                     View.EditAcc EA = new View.EditAcc() { DataContext = EAVM};
-                    EA.Show();
+                    EA.ShowDialog();
 
                 }
             };

@@ -38,7 +38,7 @@
                 </CheckBox>
 
                 <Button Height="24" ToolTip="Добавить счет" 
-                        Command="{Binding UpdateTrans}" >
+                        Command="{Binding AddNewAccCmd}" >
                     <Image Source="/Money;component/Resources/Plus-16.png" Stretch="None"/>
                 </Button>
                 
@@ -71,33 +71,38 @@
                       ItemsSource="{Binding Accsumms}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Grid MinWidth="150" HorizontalAlignment="Stretch" >
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="10"/>
-                                <ColumnDefinition/>
-                                <ColumnDefinition Width="40"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid Grid.Column="0" 
-                                Background="{Binding Acc.Type, Converter={StaticResource CnvAccTypeToColor}}"/>
-                            <TextBlock HorizontalAlignment="Left" Grid.Column="1" Margin="2"
-                                       Text="{Binding Acc.Name}"/>
-                            <TextBlock HorizontalAlignment="Right" Grid.Column="2" Margin="2"
-                                       Text="{Binding Amount, StringFormat=\{0:F\}}"
-                                       Foreground="{Binding Amount, Converter={StaticResource CnvAmountToColor}}"/>
-                            
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1"
-                                        Visibility="{Binding IsMouseOver, Converter={StaticResource CnvBoolToVisibility}, Mode=OneWay, RelativeSource={RelativeSource AncestorType=ListViewItem}}">
-                                <Button Height="24" ToolTip="Редактировать счет" 
-                                        Command="{Binding  Path=DataContext.EditAccCmd, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" >
-                                    <Image Source="/Money;component/Resources/Pencil16.png" Stretch="None"/>
-                                </Button>
+                        <Border BorderBrush="{Binding Acc.Type, Converter={StaticResource CnvAccTypeToColor}}" BorderThickness="3,0,0,0">
+                            <Grid HorizontalAlignment="Stretch" >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="160"/>
+                                    <ColumnDefinition Width="40"/>
+                                </Grid.ColumnDefinitions>
 
-                                <Button Height="24" ToolTip="Удалить счет" 
-                                        Command="{Binding Path=DataContext.RemoveAccCmd, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" >
-                                    <Image Source="/Money;component/Resources/Minus-16.png" Stretch="None"/>
-                                </Button>
-                            </StackPanel>
-                        </Grid>
+                                <TextBlock HorizontalAlignment="Left" Grid.Column="0" Margin="2"
+                                           Text="{Binding Acc.Name}"/>
+                                
+                                <TextBlock HorizontalAlignment="Right" Grid.Column="1" Margin="2"
+                                           Text="{Binding Amount, StringFormat=\{0:F\}}"
+                                           Foreground="{Binding Amount, Converter={StaticResource CnvAmountToColor}}"/>
+
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="0"
+                                            Visibility="{Binding IsMouseOver, Converter={StaticResource CnvBoolToVisibility}, Mode=OneWay, RelativeSource={RelativeSource AncestorType=ListViewItem}}">
+                                    
+                                    <Button Height="24" ToolTip="Редактировать счет" 
+                                            Command="{Binding  Path=DataContext.EditAccCmd, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                            CommandParameter="{Binding}">
+                                        <Image Source="/Money;component/Resources/Pencil16.png" Stretch="None"/>
+                                    </Button>
+
+                                    <Button Height="24" ToolTip="Удалить счет" 
+                                            Command="{Binding Path=DataContext.RemoveAccCmd, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" 
+                                            CommandParameter="{Binding}">
+                                        <Image Source="/Money;component/Resources/Delete-16.png" Stretch="None"/>
+                                    </Button>
+                                    
+                                </StackPanel>
+                            </Grid>
+                        </Border>
                     </DataTemplate>
                 </ListView.ItemTemplate>
                 <ListView.GroupStyle>
@@ -109,16 +114,21 @@
                         </GroupStyle.HeaderTemplate>
                         <GroupStyle.ContainerStyle>
                             <Style TargetType="{x:Type GroupItem}">
-                                <Setter Property="Margin" Value="0,0,0,5"/>
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType="{x:Type GroupItem}">
                                             <Expander IsExpanded="True"  >
                                                 <Expander.Header>
-                                                    <DockPanel>
-                                                        <TextBlock FontWeight="Bold" Text="{Binding Path=Name.Name}" Foreground="Black" Margin="5,0,0,0" Width="100"/>
-                                                        <TextBlock FontWeight="Bold" Text="{Binding Path=Items, Converter={StaticResource CnvGroupAccountSum}}" Foreground="Black" Margin="5,0,0,0" Width="100"/>
-                                                    </DockPanel>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="140"/>
+                                                            <ColumnDefinition Width="40"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock FontWeight="Bold" Foreground="Black"  HorizontalAlignment="Left" Grid.Column="0"
+                                                                   Text="{Binding Path=Name}"/>
+                                                        <TextBlock FontWeight="Bold" Foreground="Black" HorizontalAlignment="Right" Grid.Column="1"
+                                                                   Text="{Binding Path=Items, Converter={StaticResource CnvGroupAccountSum}}"/>
+                                                    </Grid>
                                                 </Expander.Header>
                                                 <Expander.Content>
                                                     <WrapPanel>

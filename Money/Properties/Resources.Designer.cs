@@ -93,6 +93,16 @@ namespace Money.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Delete_16 {
+            get {
+                object obj = ResourceManager.GetObject("Delete_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Delete_Database_16 {
             get {
                 object obj = ResourceManager.GetObject("Delete_Database_16", resourceCulture);
@@ -106,6 +116,16 @@ namespace Money.Properties {
         internal static System.Drawing.Bitmap Filter_Filled_16 {
             get {
                 object obj = ResourceManager.GetObject("Filter_Filled_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Group_Objects_16 {
+            get {
+                object obj = ResourceManager.GetObject("Group_Objects_16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
