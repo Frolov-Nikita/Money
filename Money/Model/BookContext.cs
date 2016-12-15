@@ -12,29 +12,33 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
+using System.Data.Common;
 
 namespace Money.Model
 {
     
     public partial class BookContext : DbContext
     {
-        
-        public BookContext(bool v = true)
-            : base(new SQLiteConnection("data source = C:\\src\\Money\\book.sqlite", v),v)
+        DbConnection Connection;
+        public BookContext(DbConnection Connection)
+            : base(Connection, true)
         {
-            
+            this.Connection = Connection;
+            //Connection.GetType()==typeof(SQLiteConnection)
+            //Connection.GetType()==typeof(MySql.Data.MySqlClient.MySqlConnection)
             Database.Log = s => Debug.WriteLine(s);
+            
         }
-
-
+        
         /// <summary>
         /// Разного рода ограничения колонок и связи таблиц.
         /// </summary>
         /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            Database.SetInitializer(new SqliteDropCreateDatabaseWhenModelChanges<BookContext>(modelBuilder));
-
+            if (Connection.GetType() == typeof(SQLiteConnection))
+                Database.SetInitializer(new SqliteDropCreateDatabaseWhenModelChanges<BookContext>(modelBuilder));
+            
             modelBuilder.Entity<Acc>().HasKey(p => p.Id);
             modelBuilder.Entity<Acc>().Property(p => p.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity).IsRequired();
             modelBuilder.Entity<Acc>().Property(p => p.Name).HasMaxLength(128).IsRequired();
@@ -134,22 +138,6 @@ namespace Money.Model
         {
             get
             {
-                /*var D = from t in Trans
-                       group t by t.AccDest_Id into gD
-                       select new
-                       {
-                           Id = gD.Key,
-                           SumD = gD.Sum(t => t.Amount) 
-                       };
-
-                var O = from t in Trans
-                        group t by t.AccOrigin_Id into gO
-                        select new
-                        {
-                            Id = gO.Key,
-                            SumO = gO.Sum(t => t.Amount)
-                        };
-                        */
                 return from a in accs
                        join d in AccDeb on a equals d.Acc into accsD
                        from ad in accsD.DefaultIfEmpty()

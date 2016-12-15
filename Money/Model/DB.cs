@@ -7,11 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using MySql.Data.MySqlClient;
+using System.Data.SQLite;
 
 namespace Money.Model
 {
     public class DB : INotifyPropertyChanged
-    {      
+    {
+        public static SQLiteConnection DefaultSQLiteConn = new SQLiteConnection(
+            Environment.ExpandEnvironmentVariables("data source = %AppData%\\book.sqlite3"), true);
         
         private string sQLiteDataSource = "c:\\temp\\abook.sqlite3";
 
@@ -109,10 +112,24 @@ namespace Money.Model
                         MySqlPassword,
                         MySqlDatabase);
                 return new MySqlConnection(cs);
-
             }
         }
-        
+
+        [XmlIgnore]
+        public SQLiteConnection SQLiteConn
+        {
+            get
+            {
+                string cs = string.Format("data source = {0}",
+                        Environment.ExpandEnvironmentVariables(SQLiteDataSource));
+                return new SQLiteConnection(cs, true);
+            }
+        }
+
+        public DB()
+        {
+  
+        }
 
         #region PropertyChanged
 

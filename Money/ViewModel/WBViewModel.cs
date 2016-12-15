@@ -15,7 +15,7 @@ using System.Windows.Data;
 
 namespace Money.ViewModel
 {
-    public class WindowWBViewModel : INotifyPropertyChanged
+    public class WBViewModel : INotifyPropertyChanged
     {
         // TODO Окно настройки подключения к MySql и резервное копирование в SQLite. Автономная работа без MySQL
         // TODO Переделать Фильтр на красиво
@@ -297,10 +297,14 @@ namespace Money.ViewModel
         #endregion
 
         // конструктор
-        public WindowWBViewModel()
+        public WBViewModel(BookContext context = null )
         {
-            BookData = new Model.BookContext();
-            
+            BookData = context?? new BookContext(Model.DB.DefaultSQLiteConn);
+
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(Accsumms);
+            PropertyGroupDescription pgd = new PropertyGroupDescription(null, new Converters.CnvGroupingAccSubTotal());
+            view.GroupDescriptions.Add(pgd);
+
             #region комманды
             AddNewTransCmd = new CommandRef()
             {
@@ -346,6 +350,8 @@ namespace Money.ViewModel
                     };
                     View.EditAcc EA = new View.EditAcc() { DataContext = EAVM };
                     EA.ShowDialog();
+                    Accs.Add(EAVM.Acc);
+                    Refresh();
                 }
             };
 
@@ -382,7 +388,7 @@ namespace Money.ViewModel
                     };
                     View.EditAcc EA = new View.EditAcc() { DataContext = EAVM};
                     EA.ShowDialog();
-
+                    Refresh();
                 }
             };
             #endregion

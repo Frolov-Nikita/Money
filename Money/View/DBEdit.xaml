@@ -1,4 +1,4 @@
-﻿<Window x:Class="Money.View.ConnectionEdit"
+﻿<Window x:Class="Money.View.DBEdit"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -8,13 +8,13 @@
         xmlns:VM="clr-namespace:Money.ViewModel"
         xmlns:M="clr-namespace:Money.Model"
         mc:Ignorable="d"
-        Title="Настройка подключения к БД" Height="341" Width="300">
-    <!--<Window.DataContext>
-        <VM:ConnectionEditViewModel/>
-    </Window.DataContext>-->
+        Title="Настройка подключения к БД" Height="361.91" Width="300">
+    <Window.DataContext>
+        <VM:DBEditViewModel/>
+    </Window.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="85"/>
+            <ColumnDefinition Width="80"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -26,14 +26,14 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <TextBlock TextWrapping="Wrap" Grid.Row="0" Grid.ColumnSpan="2" Foreground="Gray" >
+        <TextBlock TextWrapping="Wrap" Grid.Row="0" Grid.ColumnSpan="2" Foreground="Gray" Padding="2">
                     Это дистанционная база данных, которая может находиться в сети или на вашем устройстве.
         </TextBlock>
 
-        <Label Grid.Row="1" Grid.ColumnSpan="2"  Foreground="Gray" FontWeight="Bold" HorizontalAlignment="Center"
-                        Content="Настройки MySql"  />
+        <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Foreground="Gray" FontWeight="Bold"
+                        Content="Настройки MySql" />
 
         <Label Grid.Row="2"  Foreground="Gray"
                         Content="Хост БД"  />
@@ -55,8 +55,8 @@
         <TextBox Grid.Row="5" Grid.Column="1" 
                         Text="{Binding Path=DB.MySqlDatabase}"  />
 
-        <Label Grid.Row="6" Grid.ColumnSpan="2"  Foreground="Gray" FontWeight="Bold" HorizontalAlignment="Center"
-                        Content="Настройки SQLite"  />
+        <Label Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Foreground="Gray" FontWeight="Bold" 
+                        Content="Настройки SQLite" />
 
         <Label Content="Файл SQLite" Grid.Row="7"  Foreground="Gray"/>
         <Grid Grid.Row="7" Grid.Column="1" >
@@ -68,6 +68,20 @@
                         Text="{Binding Path=DB.SQLiteDataSource}" />
             <Button Content=".." Grid.Column="1" Command="{Binding OpenSQLiteDBDialog}"/>
         </Grid>
+        <WrapPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" VerticalAlignment="Bottom">
+            <Button Content="Открыть MySql" Padding="10,6" Margin="2" FontWeight="Bold"
+                    Command="{Binding OpenMySql}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+            <Button Content="Открыть SQLite" Padding="10,6" Margin="2"
+                    Command="{Binding OpenSQLite}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+            <Button Content="MySql => SQLite" Padding="10,6" Margin="2"
+                    Command="{Binding MySqlToSQLite}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+            <Button Content="SQLite => MySql" Padding="10,6" Margin="2"
+                    Command="{Binding SQLiteToMySql}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+        </WrapPanel>
     </Grid>
 
 </Window>

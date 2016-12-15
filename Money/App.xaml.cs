@@ -8,6 +8,9 @@ using System.Windows;
 
 namespace Money
 {
+    using Model;
+    using ViewModel;
+    using View;
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
@@ -15,7 +18,10 @@ namespace Money
     {
         public App()
         {
-
+            //BookContext BC = new BookContext((new DB()).MySqlConn);
+            //WBViewModel WBViewModel = new WBViewModel(BC);
+            //View.WB WB = new View.WB() { DataContext = WBViewModel };
+            //WB.Show();
         }
     }
 }

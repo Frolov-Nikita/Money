@@ -17,9 +17,9 @@ namespace Money.View
     /// <summary>
     /// Interaction logic for ConnectionEdit.xaml
     /// </summary>
-    public partial class ConnectionEdit : Window
+    public partial class DBEdit : Window
     {
-        public ConnectionEdit()
+        public DBEdit()
         {
             InitializeComponent();
         }
