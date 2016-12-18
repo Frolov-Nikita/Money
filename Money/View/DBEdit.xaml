@@ -6,82 +6,125 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:Money.View"
         xmlns:VM="clr-namespace:Money.ViewModel"
+        xmlns:VMConv="clr-namespace:Money.ViewModel.Converters"
         xmlns:M="clr-namespace:Money.Model"
         mc:Ignorable="d"
-        Title="Настройка подключения к БД" Height="361.91" Width="300">
+        Title="Настройка подключения к БД" Height="304.004" Width="336.038">
     <Window.DataContext>
         <VM:DBEditViewModel/>
     </Window.DataContext>
+    <Window.Resources>
+        <VMConv:CnvBoolToVisibility x:Key="CnvBoolToVisibility"/>
+    </Window.Resources>
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="80"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="36"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <TextBlock TextWrapping="Wrap" Grid.Row="0" Grid.ColumnSpan="2" Foreground="Gray" Padding="2">
-                    Это дистанционная база данных, которая может находиться в сети или на вашем устройстве.
-        </TextBlock>
 
-        <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Foreground="Gray" FontWeight="Bold"
-                        Content="Настройки MySql" />
+        <StackPanel>
+            <Menu >
+                <MenuItem Header="Синхронизация" VerticalAlignment="Center" Height="24">
+                    <MenuItem Header="MySql => SQLite" 
+                        Command="{Binding MySqlToSQLite}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                    <MenuItem Header="SQLite => MySql" 
+                        Command="{Binding SQLiteToMySql}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                </MenuItem>
+            </Menu>
 
-        <Label Grid.Row="2"  Foreground="Gray"
+            <Expander Margin="5" Padding="5" BorderBrush="LightGray" BorderThickness="1">
+                <Expander.Header>
+                    <StackPanel Orientation="Horizontal" Margin="10,0">
+                        <TextBlock Text="MySql" Foreground="Gray" VerticalAlignment="Center"  Width="40"/>
+                        
+                        <Button Content="Открыть" Padding="10,2" Margin="10,0" FontWeight="Bold" Grid.Column="1"
+                            Command="{Binding OpenMySql}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                        
+                        <Button Content="тест" Padding="10,2" Margin="10,0"
+                            Command="{Binding CheckMySqlConnect}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                        
+                        <Label Content="Тест ОК" Foreground="Green"
+                               Visibility="{Binding DB.MySqlConnOK, Converter={StaticResource CnvBoolToVisibility}}"/>
+                    </StackPanel>
+                </Expander.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0"  Foreground="Gray"
                         Content="Хост БД"  />
-        <TextBox Grid.Row="2" Grid.Column="1" 
+                    <TextBox Grid.Row="0" Grid.Column="1" 
                         Text="{Binding Path=DB.MySqlServer}"  />
 
-        <Label Grid.Row="3"  Foreground="Gray"
+                    <Label Grid.Row="1"  Foreground="Gray"
                         Content="User ID" />
-        <TextBox Grid.Row="3" Grid.Column="1" 
+                    <TextBox Grid.Row="1" Grid.Column="1" 
                         Text="{Binding Path=DB.MySqlUserID}" />
 
-        <Label Grid.Row="4"  Foreground="Gray"
+                    <Label Grid.Row="2"  Foreground="Gray"
                         Content="Password" />
-        <TextBox Grid.Row="4" Grid.Column="1" 
+                    <TextBox Grid.Row="2" Grid.Column="1" 
                      Text="{Binding Path=DB.MySqlPassword}"/>
 
-        <Label Grid.Row="5"  Foreground="Gray"
+                    <Label Grid.Row="3"  Foreground="Gray"
                         Content="База" />
-        <TextBox Grid.Row="5" Grid.Column="1" 
+                    <TextBox Grid.Row="3" Grid.Column="1" 
                         Text="{Binding Path=DB.MySqlDatabase}"  />
 
-        <Label Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Foreground="Gray" FontWeight="Bold" 
-                        Content="Настройки SQLite" />
+                </Grid>
+            </Expander>
+            <StackPanel Orientation="Horizontal">
+                
+            </StackPanel>
+            <Expander Margin="5" Padding="5" BorderBrush="LightGray" BorderThickness="1">
+                <Expander.Header>
+                    <StackPanel Orientation="Horizontal" Margin="10,0">
+                        <TextBlock Text="SQLite" Foreground="Gray" VerticalAlignment="Center" Width="40"/>
+                        
+                        <Button Content="Открыть" Padding="10,2" Margin="10,0" FontWeight="Bold"
+                            Command="{Binding OpenSQLite}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
+                        
+                        <Button Content="тест" Padding="10,2" Margin="10,0"
+                            Command="{Binding CheckSQLiteConnect}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
 
-        <Label Content="Файл SQLite" Grid.Row="7"  Foreground="Gray"/>
-        <Grid Grid.Row="7" Grid.Column="1" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="32"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock VerticalAlignment="Center" Grid.Column="0" TextWrapping="Wrap"
+                        <Label Content="Тест ОК" Foreground="Green"
+                               Visibility="{Binding DB.SQLiteConnOK, Converter={StaticResource CnvBoolToVisibility}}"/>
+                    </StackPanel>
+                </Expander.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0"  Foreground="Gray" Content="Файл SQLite"/>
+                    <Grid Grid.Row="0" Grid.Column="1" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="32"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center" Grid.Column="0" TextWrapping="Wrap"
                         Text="{Binding Path=DB.SQLiteDataSource}" />
-            <Button Content=".." Grid.Column="1" Command="{Binding OpenSQLiteDBDialog}"/>
-        </Grid>
-        <WrapPanel Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="2" VerticalAlignment="Bottom">
-            <Button Content="Открыть MySql" Padding="10,6" Margin="2" FontWeight="Bold"
-                    Command="{Binding OpenMySql}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
-            <Button Content="Открыть SQLite" Padding="10,6" Margin="2"
-                    Command="{Binding OpenSQLite}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
-            <Button Content="MySql => SQLite" Padding="10,6" Margin="2"
-                    Command="{Binding MySqlToSQLite}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
-            <Button Content="SQLite => MySql" Padding="10,6" Margin="2"
-                    Command="{Binding SQLiteToMySql}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"/>
-        </WrapPanel>
+                        <Button Content=".." Grid.Column="1" Command="{Binding OpenSQLiteDBDialog}"/>
+                    </Grid>
+
+                </Grid>
+            </Expander>
+            <Label Content="{Binding State}"/>
+
+        </StackPanel>
     </Grid>
 
 </Window>

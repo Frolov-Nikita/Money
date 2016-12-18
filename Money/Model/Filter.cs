@@ -19,70 +19,71 @@ namespace Money.Model
          *      .ToDictionary<int, string>(row => row.Field<int>(col1),
                                 row => row.Field<string>(col2));
          */
-         
-        //private Regex r = new Regex("");
 
-        string _Acc="";
+        Acc acc;
+        public Acc Acc
+        {
+            get { return acc; }
+            set
+            {
+                acc = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged("SQLString");
+                NotifyPropertyChanged("ViewString");
+            }
+        }
 
-        public string Acc
+        Gp gP;
+
+        public Gp GP
         {
             get
             {
-                return _Acc;
+                return gP;
             }
 
             set
             {
-                _Acc = value;
+                gP = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged("SQLString");
+                NotifyPropertyChanged("ViewString");
             }
         }
 
-        string _GP="";
-
-        public string GP
-        {
-            get
-            {
-                return _GP;
-            }
-
-            set
-            {
-                _GP = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        DateTime _FromDate;
+        DateTime fromDate = DateTime.Now.AddDays(-61);
 
         public DateTime FromDate
         {
             get
             {
-                return _FromDate;
+                return fromDate;
             }
 
             set
             {
-                _FromDate = value;
+                fromDate = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged("SQLString");
+                NotifyPropertyChanged("ViewString");
             }
         }
 
-        DateTime _ToDate;
+        DateTime toDate = DateTime.Now.AddDays(+1);
 
         public DateTime ToDate
         {
             get
             {
-                return _ToDate;
+                return toDate;
             }
 
             set
             {
-                _ToDate = value;
+                toDate = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged("SQLString");
+                NotifyPropertyChanged("ViewString");
             }
         }
 
@@ -99,82 +100,57 @@ namespace Money.Model
             {
                 _HashTag = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged("SQLString");
+                NotifyPropertyChanged("ViewString");
             }
         }
-        
-        public string Rsoult
+
+        /// <summary>
+        /// Собранная из полей инструкция фильтра коллекции транзакций
+        /// </summary>
+        public string SQLString
         {
-            get { return ToString(); }
-            set { Parse(value); }
-        }
-        
-        void Parse(string sFilter)
-        {
-            string S = sFilter.Replace("\t", " ").Replace("\r\n", " ").Replace("\r", " ").Replace("\n", " ");
-            while (S.IndexOf(": ") != -1) S = S.Replace(": ",":");
-            //int index = 0;
-
-            string[] parts = sFilter.Split(' ');
-
-        }
-
-        public override string ToString()
-        {
-            string F = "";
-            if (GP != "") Acc = "";//доп защита
-
-            if (GP != "") F += "GP:" + GP;
-            if (Acc != "") F += "Acc:" + Acc;
-
-            if (HashTag != "")
+            get
             {
-                F += (F == "") ? "" : " ";
-                F += HashTag;
-            }
 
-            if (_FromDate.Ticks != 0)
-            {
-                F += (F == "") ? "" : " " ;
-                F += "From:" + _FromDate.ToString("dd.MM.YYYY");
-            }
+                string f = "";
+                if (Acc != null) f += " (AccOrigin.Name = '" + Acc.Name + "' OR AccDest.Name = '" + Acc.Name + "') ";
 
-            if (_ToDate.Ticks != 0)
-            {
-                F += (F == "") ? "" : " ";
-                F += "To:" + _ToDate.ToString("dd.MM.YYYY");
-            }
+                if (FromDate != null)
+                {
+                    f += f != "" ? " AND " : "";
+                    f += " (Date > '" + FromDate.ToString("yyyy-MM-dd") + "') ";
+                }
 
-            return F;
+                if (ToDate != null)
+                {
+                    f += f != "" ? " AND " : "";
+                    f += " (Date < '" + ToDate.ToString("yyyy-MM-dd") + "') ";
+                }
+
+                return f;
+            }
         }
 
-        public string ToQueryFilterString()
+        /// <summary>
+        /// Собранная из полей инструкция фильтра коллекции транзакций
+        /// </summary>
+        public string ViewString
         {
-            //TODO Перепилить на SQL синтаксис
-            string F = "";
-            if (GP != "") Acc = "";//доп защита
-
-            if (GP != "") F += "GP:" + GP;
-            if (Acc != "") F += "Acc:" + Acc;
-
-            if (HashTag != "")
+            get
             {
-                F += (F == "") ? "" : " ";
-                F += HashTag;
-            }
 
-            if (_FromDate.Ticks != 0)
-            {
-                F += (F == "") ? "" : " ";
-                F += "From:" + _FromDate.ToString("dd.MM.YYYY");
-            }
+                string f = "";
+                if (Acc != null) f += "'" + Acc.Name + "' ";
 
-            if (_ToDate.Ticks != 0)
-            {
-                F += (F == "") ? "" : " ";
-                F += "To:" + _ToDate.ToString("dd.MM.YYYY");
+                if (FromDate != null)
+                    f += "С:" + FromDate.ToString("yyyy-MM-dd") + " ";
+
+                if (ToDate != null)
+                    f += "По:" + ToDate.ToString("yyyy-MM-dd") + " ";
+
+                return f;
             }
-            throw new NotImplementedException("Не написана реализация этого метода");
-            return F;
         }
 
         #region PropertyChanged

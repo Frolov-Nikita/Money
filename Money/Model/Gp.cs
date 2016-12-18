@@ -18,6 +18,15 @@ namespace Money.Model
             this.Accounts = new ObservableCollection<Acc>();
         }
 
+        public Gp(Gp g)
+        {
+            id = g.id;
+            name = g.name;
+            description = g.description;
+
+            this.Accounts = new ObservableCollection<Acc>();
+        }
+
         private int id;
         public int Id
         {

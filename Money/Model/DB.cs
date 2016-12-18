@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using MySql.Data.MySqlClient;
 using System.Data.SQLite;
+using System.IO;
 
 namespace Money.Model
 {
@@ -126,9 +127,100 @@ namespace Money.Model
             }
         }
 
+        private bool sQLiteConnOK = false;
+        public bool SQLiteConnOK
+        {
+            get
+            {
+                return sQLiteConnOK;
+            }
+
+            set
+            {
+                sQLiteConnOK = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private bool mySqlConnOK = false;
+        public bool MySqlConnOK
+        {
+            get
+            {
+                return mySqlConnOK;
+            }
+
+            set
+            {
+                mySqlConnOK = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        //конструктор
         public DB()
         {
-  
+            PropertyChanged += DB_PropertyChanged;
+        }
+
+        private void DB_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case "SQLiteDataSource":
+                    SQLiteConnOK = false;
+                    break;
+                case "MySqlServer":
+                case "MySqlUserID":
+                case "MySqlPassword":
+                case "MySqlDatabase":
+                    MySqlConnOK = false;
+                    break;
+            }
+        }
+
+        public bool CheckSQLiteConnect()
+        {
+            if (SQLiteDataSource != "")
+                if (File.Exists(Environment.ExpandEnvironmentVariables(SQLiteDataSource))) 
+                    try
+                    {
+                        SQLiteConn.Open();
+                        SQLiteConn.Close();
+                        SQLiteConnOK = true;
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Windows.MessageBox.Show(ex.Message,
+                            "Ошибка подключения к SQLite",
+                            System.Windows.MessageBoxButton.OK);
+                    }
+            SQLiteConnOK = false;
+            return false;
+        }
+
+        public bool CheckMySqlConnect()
+        {
+            if ((MySqlServer != "") &&
+                (MySqlUserID != "") &&
+                (MySqlPassword != "") &&
+                (MySqlDatabase != "") )
+                try
+                {
+                    MySqlConn.Open();
+                    MySqlConn.Close();
+                    MySqlConnOK = true;
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show(ex.Message,
+                        "Ошибка подключения к MySQL",
+                        System.Windows.MessageBoxButton.OK);
+                }
+            MySqlConnOK = false;
+            return false;
         }
 
         #region PropertyChanged

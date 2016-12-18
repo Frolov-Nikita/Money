@@ -162,90 +162,20 @@ namespace Money.ViewModel
         }
         #endregion
 
-        #region Фильтр
-        Acc filterSlectedAcc;
-        public Acc FilterAcc
-        {
-            get { return filterSlectedAcc; }
-            set
-            {
-                filterSlectedAcc = value;
-                FilterUpdate();
-                NotifyPropertyChanged();
-            }
-        }
-
-        private DateTime filterDateBegin = DateTime.Now.AddDays(-61);
-        public DateTime FilterDateBegin
-        {
-            get { return filterDateBegin; }
-            set
-            {
-                filterDateBegin = value;
-                FilterUpdate();
-                NotifyPropertyChanged();
-            }
-        }
-
-        private DateTime filterDateEnd = DateTime.Now.AddDays(1);
-
-        public DateTime FilterDateEnd
-        {
-            get { return filterDateEnd; }
-            set
-            {
-                filterDateEnd = value;
-                FilterUpdate();
-                NotifyPropertyChanged();
-            }
-        }
-        
-        /// <summary>
-        /// Собранная из полей инструкция фильтра коллекции транзакций
-        /// </summary>
-        public string FilterSQLString { get
-            {
-
-                string f = "";
-                if (FilterAcc != null) f += " (AccOrigin.Name = '" + FilterAcc.Name + "' OR AccDest.Name = '" + FilterAcc.Name + "') ";
-
-                if (FilterDateBegin != null)
-                {
-                    f += f != "" ? " AND " : "";
-                    f += " (Date > '" + FilterDateBegin.ToString("yyyy-MM-dd") + "') ";
-                }
-
-                if (filterDateEnd != null)
-                {
-                    f += f != "" ? " AND " : "";
-                    f += " (Date < '" + filterDateEnd.ToString("yyyy-MM-dd") + "') ";
-                }
-
-                return f;
-            }
-        }
-
-        /// <summary>
-        /// Собранная из полей инструкция фильтра коллекции транзакций
-        /// </summary>
-        public string FilterViewString
+        private Filter filter = new Filter();
+        public Filter Filter
         {
             get
             {
+                return filter;
+            }
 
-                string f = "";
-                if (FilterAcc != null) f += "'" + FilterAcc.Name + "' ";
-
-                if (FilterDateBegin != null)                
-                    f += "С:" + FilterDateBegin.ToString("yyyy-MM-dd") + " ";
-                
-                if (filterDateEnd != null)
-                    f += "По:" + filterDateEnd.ToString("yyyy-MM-dd") + " ";
-
-                return f;
+            set
+            {
+                filter = value;
+                NotifyPropertyChanged();
             }
         }
-        #endregion
 
         #region График
         private bool _ChartEnabled;
@@ -257,7 +187,6 @@ namespace Money.ViewModel
             {
                 _ChartEnabled = value;
                 NotifyPropertyChanged();
-                FilterUpdate();
             }
         }
 
@@ -299,18 +228,18 @@ namespace Money.ViewModel
         // конструктор
         public WBViewModel(BookContext context = null )
         {
-            BookData = context?? new BookContext(Model.DB.DefaultSQLiteConn);
+            BookData = context?? new BookContext(DB.DefaultSQLiteConn);
 
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(Accsumms);
             PropertyGroupDescription pgd = new PropertyGroupDescription(null, new Converters.CnvGroupingAccSubTotal());
             view.GroupDescriptions.Add(pgd);
-
-            #region комманды
+            
+            #region Комманды
             AddNewTransCmd = new CommandRef()
             {
                 ExecuteDelegate = (a) =>
                 {
-                    BookData.Trans.Add(new Model.Tran()
+                    BookData.Trans.Add(new Tran()
                     {
                         AccDest_Id = NewIDAccDest,
                         AccOrigin_Id = NewIDAccOrigin,
@@ -401,82 +330,88 @@ namespace Money.ViewModel
         /// </summary>
         public void Refresh()
         {
+            int? saveFilterAccId = null;
+            if (filter.Acc != null) saveFilterAccId = filter.Acc.Id;
+
             BookData.SaveChanges();
             
-            BookData.Accs.Load();
-            BookData.Trans.Load();
-            BookData.Gps.Load();
             BookData.AccSummary.Load();
-
-            Accs = BookData.Accs.Local.ToBindingList();
-            Gps = BookData.Gps.Local.ToBindingList();
-
-            if (FilterAcc == null)
-            {
-                Trans = (from t in BookData.Trans.Local
-                         where (t.Date >= filterDateBegin) && (t.Date <= filterDateEnd)
-                         select t).ToList();
-            }
-            else
-            {
-                Trans = (from t in BookData.Trans.Local
-                         where (t.Date >= filterDateBegin) &&
-                            (t.Date <= filterDateEnd) &&
-                            ((t.AccDest == FilterAcc)||(t.AccOrigin == FilterAcc))
-                         select t).ToList();
-            }
 
             Accsumms.Clear();
             foreach(var i in BookData.AccSummary.ToList())
                 Accsumms.Add(i);
 
-        }
+            BookData.Accs.Load();
+            BookData.Trans.Load();
+            BookData.Gps.Load();
+
+            Accs = BookData.Accs.Local.ToBindingList();
+            Gps = BookData.Gps.Local.ToBindingList();
+                                     
+            if (saveFilterAccId == null)
+            {
+                Trans = (from t in BookData.Trans.Local
+                         where (t.Date >= Filter.FromDate) && (t.Date <= Filter.ToDate)
+                         select t).ToList();
+            }
+            else
+            {
+                Filter.Acc = Accs.FirstOrDefault(a => a.Id == saveFilterAccId);
+                Trans = (from t in BookData.Trans.Local
+                         where (t.Date >= Filter.FromDate) &&
+                            (t.Date <= Filter.ToDate) &&
+                            ((t.AccDest == Filter.Acc)||(t.AccOrigin == Filter.Acc))
+                         select t).ToList();
+            }
+
+            UpdateChart();
+
+        }// public void Refresh()
 
         /// <summary>
         /// Обновляем фильтр в TransView и пересоздаются кривые графика, если тот включен
         /// </summary>
-        void FilterUpdate()
+        void UpdateChart()
         {
+            ChartBalance.Clear();
+            ChartExpense.Clear();
+            ChartDates.Clear();
+
+            if (filter.Acc == null)
+            {
+                ChartEnabled = false;
+                return;
+            }
+            if (!ChartEnabled) return;
+
+            double Summ = 0.0;
+            double SubSumm = 0.0;
+            double SubCred = 0.0;
+            double SubDebt = 0.0;
+
+            for (DateTime d = new DateTime(filter.FromDate.Date.Ticks);
+                d<= Filter.ToDate.Date;
+                d.AddDays(1))
+            {
+                ChartDates.Add(d.ToString("dd.MM.yyyy"));
+
+                SubDebt = (from t in Trans
+                           where (t.Date == d) && (Filter.Acc == t.AccDest)
+                           select t).Sum(t => t.Amount);
+
+                SubCred = (from t in Trans
+                           where (t.Date == d) && (Filter.Acc == t.AccOrigin)
+                           select t).Sum(t => t.Amount);
+
+                SubSumm = SubDebt - SubCred;
+                Summ += SubSumm;
+
+                ChartExpense.Add(SubSumm);
+                ChartBalance.Add(Summ);
+
+                
+            }//for (DateTime d 
             
-            //if (!FilterEnabled)
-            //{
-            //    TransView.RowFilter = "";
-            //    return;
-            //}
-
-            //if (FilterSlectedAcc > 0)
-            //    TransView.RowFilter = "(IDAccOrigin = " + FilterSlectedAcc + " OR IDAccDest = " + FilterSlectedAcc + ") AND Date >= '" + FilterDateBegin.ToString() + "' and Date <= '" + FilterDateEnd.ToString() + "'";
-            //else
-            //    TransView.RowFilter = "Date >= '" + FilterDateBegin.ToString() + "' and Date <= '" + FilterDateEnd.ToString() + "'";
-            //// обновление линий тренда, если график включен
-            //if (ChartEnabled && (FilterSlectedAcc > 0))
-            //{
-            //    ChartBalance.Clear();
-            //    ChartExpense.Clear();
-            //    ChartDates.Clear();
-            //    double summ = 0.0, balanceSumm = 0.0;
-            //    //TODO переделать графики тут
-            //    var groups = TransView.ToTable().AsEnumerable().OrderBy(x => x.Field<DateTime>("Date"))
-            //        .GroupBy(r => r.Field<DateTime>("Date"));
-            //    foreach (var gp in groups)
-            //    {
-            //        ChartDates.Add(gp.Key.ToString("dd.MM.yyyy"));
-            //        summ = 0;
-            //        foreach (var row in gp)
-            //        {
-            //            if (row.Field<long>("IDAccOrigin") == FilterSlectedAcc)
-            //                summ -= row.Field<double>("Amount");
-            //            else
-            //                summ += row.Field<double>("Amount");
-            //        }
-            //        balanceSumm += summ;
-            //        ChartExpense.Add(summ);
-            //        ChartBalance.Add(balanceSumm);
-            //    }
-
-            //}
-
-            ////NotifyPropertyChanged(ChartSeriesColl)
         }
 
         #region PropertyChanged

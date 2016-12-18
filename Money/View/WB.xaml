@@ -45,16 +45,12 @@
                 <Separator/>
                 <Label Content="Cчет:"/>
                 <ComboBox  DisplayMemberPath="Name" MinWidth="110"
-                    SelectedValue="{Binding Path=FilterAcc}" 
+                    SelectedValue="{Binding Path=Filter.Acc}" 
                     ItemsSource="{Binding Path=Accs}"/>
                 <Label Content="Фильтр с:"/>
-                <DatePicker  SelectedDate="{Binding Path=FilterDateBegin}" />
+                <DatePicker  SelectedDate="{Binding Path=Filter.FromDate}" />
                 <Label Content="по:"/>
-                <DatePicker SelectedDate="{Binding Path=FilterDateEnd}"/>
-
-                <CheckBox Height="24" ToolTip="Убрать фильтры" IsChecked="{Binding FilterEnabled}">
-                    <Image Source="/Money;component/Resources/ClearFilters16.png" Stretch="None"/>
-                </CheckBox>
+                <DatePicker SelectedDate="{Binding Path=Filter.ToDate}"/>
 
                 <Separator/>
             </ToolBar>
@@ -66,7 +62,7 @@
             </Grid.ColumnDefinitions>
 
             <ListView Grid.Column="0" x:Name="lvAccGp" 
-                      SelectedValue="{Binding FilterAcc}"
+                      SelectedValue="{Binding Filter.Acc}"
                       SelectedValuePath="Acc"
                       ItemsSource="{Binding Accsumms}">
                 <ListView.ItemTemplate>

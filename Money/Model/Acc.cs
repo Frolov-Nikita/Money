@@ -16,6 +16,18 @@ namespace Money.Model
             this.TransDest = new ObservableCollection<Tran>();
         }
 
+        public Acc(Acc a)
+        {
+            id = a.id;
+            name = a.name;
+            description = a.description;
+            type = a.type;
+
+            this.Gps = new ObservableCollection<Gp>();
+            this.TransOrigin = new ObservableCollection<Tran>();
+            this.TransDest = new ObservableCollection<Tran>();
+        }
+
         private int id;
         public int Id
         {
@@ -138,18 +150,9 @@ namespace Money.Model
         {
             return Name.CompareTo(((Acc)obj).Name);
         }
+        
         #endregion
-
-        //public void RecalcAmount()
-        //{
-        //    amount = (from tD in TransDest.AsQueryable()
-        //              group tD by tD.AccDest into gD
-        //              select gD.Sum(t => t.Amount)).FirstOrDefault() -
-
-        //           (from tO in TransOrigin.AsQueryable()
-        //            group tO by tO.AccOrigin into gO
-        //            select gO.Sum(t => t.Amount)).FirstOrDefault();
-        //}
+        
     }
 
     public class AccSubTotal

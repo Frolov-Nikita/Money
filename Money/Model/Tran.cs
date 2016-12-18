@@ -10,8 +10,21 @@ using System.Threading.Tasks;
 
 namespace Money.Model
 {
-    public class Tran : INotifyPropertyChanged
+    public class Tran : INotifyPropertyChanged, IComparable
     {
+        public Tran()
+        {
+        }
+
+        public Tran(Tran t)
+        {
+            id = t.id;
+            description = t.description;
+            date = t.date;
+            amount = t.amount;
+            accDest_Id = t.accDest_Id;
+            accOrigin_Id = t.accOrigin_Id;
+        }
 
         private int id;
         public int Id
@@ -146,6 +159,11 @@ namespace Money.Model
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        
+        public int CompareTo(object obj)
+        {
+            return Date.CompareTo(((Tran)obj).Date);
         }
         #endregion
     }
