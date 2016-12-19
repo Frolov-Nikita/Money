@@ -33,6 +33,10 @@
                         Command="{Binding RefreshCmd}" >
                     <Image Source="/Money;component/Resources/Available Updates-16.png" Stretch="None"/>
                 </Button>
+                <Button Height="24" ToolTip="Вставить операции из буфера" 
+                        Command="{Binding PasteTransCmd}" >
+                    <Image Source="/Money;component/Resources/Paste-16.png" Stretch="None"/>
+                </Button>
                 <CheckBox ToolTip="Статистика по счету" IsChecked="{Binding ChartEnabled}">
                     <Image Source="/Money;component/Resources/Line Chart-16.png" Stretch="None"/>
                 </CheckBox>
@@ -198,7 +202,9 @@
                     <DataGrid.Columns>
 
                         <DataGridTextColumn Header="ID" Binding="{Binding Id}"/>
-                        <DataGridTemplateColumn Header="Дата" CanUserSort="True" SortMemberPath="Date"  >
+                        
+                        <DataGridTemplateColumn Header="Дата" CanUserSort="True" SortMemberPath="Date"
+                                                ClipboardContentBinding="{Binding Date, StringFormat=dd.MM.yyy}" >
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Date, StringFormat=dd.MM.yyy}" Margin="3,0"/>
@@ -210,9 +216,11 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellEditingTemplate>
                         </DataGridTemplateColumn>
+                        
                         <DataGridComboBoxColumn Header="Откуда"
                                             DisplayMemberPath="Name"
-                                            SelectedValueBinding="{Binding AccOrigin}" >
+                                            SelectedValueBinding="{Binding AccOrigin}"
+                                            ClipboardContentBinding="{Binding AccOrigin.Name}">
                             <DataGridComboBoxColumn.ElementStyle>
                                 <Style TargetType="{x:Type ComboBox}">
                                     <Setter Property="ItemsSource" Value="{Binding Path=DataContext.Accs, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
@@ -225,9 +233,11 @@
                                 </Style>
                             </DataGridComboBoxColumn.EditingElementStyle>
                         </DataGridComboBoxColumn>
+                        
                         <DataGridComboBoxColumn Header="Куда"
                                             DisplayMemberPath="Name"
-                                            SelectedValueBinding="{Binding AccDest}">
+                                            SelectedValueBinding="{Binding AccDest}"
+                                            ClipboardContentBinding="{Binding AccDest.Name}">
                             <DataGridComboBoxColumn.ElementStyle>
                                 <Style TargetType="{x:Type ComboBox}">
                                     <Setter Property="ItemsSource" Value="{Binding Path=DataContext.Accs, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" />
@@ -240,7 +250,10 @@
                                 </Style>
                             </DataGridComboBoxColumn.EditingElementStyle>
                         </DataGridComboBoxColumn>
-                        <DataGridTextColumn Header="Сумма" Binding="{Binding Amount, StringFormat=\{0:F\} }" >
+                        
+                        <DataGridTextColumn Header="Сумма" 
+                                            Binding="{Binding Amount, StringFormat=\{0:F\} }" 
+                                            ClipboardContentBinding="{Binding Amount, StringFormat=\{0:F\} }">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="{x:Type TextBlock}">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -248,7 +261,11 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn Header="Описание" Binding="{Binding Description}" Width="*"/>
+
+                        <DataGridTextColumn Header="Описание"  Width="*"
+                                            Binding="{Binding Description}"
+                                            ClipboardContentBinding="{Binding Description}"/>
+                        
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>

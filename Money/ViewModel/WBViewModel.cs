@@ -223,6 +223,8 @@ namespace Money.ViewModel
         public CommandRef AddNewAccCmd { get; set; }
         public CommandRef RemoveAccCmd { get; set; }
         public CommandRef EditAccCmd { get; set; }
+
+        public CommandRef PasteTransCmd { get; set; }
         #endregion
 
         // конструктор
@@ -320,6 +322,12 @@ namespace Money.ViewModel
                     Refresh();
                 }
             };
+
+            PasteTransCmd = new CommandRef()
+            {
+                ExecuteDelegate = a => { }
+            };
+
             #endregion
 
             Refresh();
@@ -391,7 +399,7 @@ namespace Money.ViewModel
 
             for (DateTime d = new DateTime(filter.FromDate.Date.Ticks);
                 d<= Filter.ToDate.Date;
-                d.AddDays(1))
+                d = d.AddDays(1))
             {
                 ChartDates.Add(d.ToString("dd.MM.yyyy"));
 

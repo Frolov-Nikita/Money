@@ -19,6 +19,11 @@ namespace Money.Model
     
     public partial class BookContext : DbContext
     {
+        //TODO Добавить уникальность имен полей
+        //TODO Добавить поле важности(обязательности) операции
+        //TODO hashcode 
+        //TODO точка отсчета суммы для графиков
+
         DbConnection Connection;
         public BookContext(DbConnection Connection)
             : base(Connection, true)
